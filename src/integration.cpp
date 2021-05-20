@@ -18,7 +18,7 @@ Integration::Integration(int number, float step, QVector<QString> keys)
 }
 
 void Integration::Integrate(float *time)
-{  
+{
     nums num = First;
     m_time = time;
 
@@ -121,5 +121,3 @@ void Integration::Runge_Kutta_4(const float &dt)
 
     *m_time = t_s;
 }
-
-
