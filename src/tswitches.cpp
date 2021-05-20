@@ -19,12 +19,12 @@ void TSwitches::FallBackSwitch_F()
 bool TSwitches::CheckSign()
 {
     if (Enabled) {
-        if (signbit (Switch_F[0]) == signbit (Switch_F[1]) ) {
+        if (signbit (Switch_F[0]) == signbit (Switch_F[1]))
             return true;
-        }
-        else return false;
-    }
-    else return false;
+        else
+            return false;
+    } else
+        return false;
 }
 
 bool TSwitches::CheckAccuracy()
@@ -40,11 +40,15 @@ void TSwitches::SetAccuracy(float Accur)
 float TSwitches::GetE()
 {
     if (abs(Switch_F[0])>Accuracy) {
-        if (signbit (Switch_F[1])) {
+        if (signbit (Switch_F[1]))
             return  Switch_F[1]/(Switch_F[1]-Switch_F[0]);
-        }
-        else {
+        else
             return Accuracy/abs(Switch_F[0]);
-        }
-    }
+    } else
+          return 1;
+}
+
+void TSwitches::SetKey(QString name)
+{
+    Key = name;
 }

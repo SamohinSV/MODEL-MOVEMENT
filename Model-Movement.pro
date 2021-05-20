@@ -13,9 +13,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    src/enumtswitches.cpp \
-    src/integration.cpp \
-        src/main.cpp\ \
+    src/main.cpp \
+    src/integration.cpp \  
     src/tswitches.cpp
 
 
@@ -33,6 +32,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    src/enumtswitches.h \
     src/integration.h \
     src/tswitches.h

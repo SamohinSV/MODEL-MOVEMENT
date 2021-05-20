@@ -1,27 +1,30 @@
 #include "integration.h"
 #include <math.h>
 
-Integration::Integration(int n, float intStep)
+Integration::Integration(int number, float step, QVector<QString> keys)
+    :m_number(number),m_step(step)
 {
-    this->N  = n;
-    this->intStep = intStep;
-
-    OutAccur = intStep/100;
+    OutAccur = m_step/100;
 
     for (auto &i : m_data)
-        i.resize (n);
+        i.resize (m_number);
 
-    m_KeysBand.CreateAccuracy (OutAccur);
+    m_KeysBand.resize (keys.size ());
+
+    for (int i = 0;i<m_KeysBand.size ();i++) {
+        m_KeysBand[i].SetKey(keys[i]);
+        m_KeysBand[i].SetAccuracy (OutAccur);
+    }
 }
 
-void Integration::Integrate(float *t)
+void Integration::Integrate(float *time)
 {  
     nums num = First;
-    m_t = t;
+    m_time = time;
 
     float dr_t;
-    modf(*t/intStep,&dr_t);
-    float m_dt = intStep * (1 - dr_t);
+     modf(*m_time/m_step,&dr_t);
+    float dtime = m_step * (1 - dr_t);
 
     SwitchKey ();
 
@@ -29,47 +32,62 @@ void Integration::Integrate(float *t)
     do {
         do {
             m_data[2] = m_data[0];
-            RK_4(m_dt);
-            SwitchKey ();
+            Runge_Kutta_4(dtime);
+            SwitchKey();
 
             m_KeysSet.resize (0);
-            m_KeysBand.CheckSwitches (m_KeysSet);
 
+            for (int i = 0; i <m_KeysBand.size (); i++) {
+                if (m_KeysBand[i].CheckSign ())
+                    m_KeysSet.push_back (i);
+            }
 
-            if (num == First && m_KeysSet.size () == 0) {
+            if (num == First && m_KeysSet.size () == 0)
                 num = Second;
-            }
-            else {
+            else
                 num = Another;
-            }
 
-            if (num == Second) {
-                m_dt = intStep;
-            }
+            if (num == Second)
+                dtime = m_step;
+
+
         } while (!(m_KeysSet.size () == 0));
 
         Tolerance = true;
         float e = 1;
 
         for (auto const &i:m_KeysSet) {
-            Tolerance = Tolerance && m_KeysBand.CheckAccuracyN (i);
+            Tolerance = Tolerance && m_KeysBand[i].CheckAccuracy();
 
-            float ei = m_KeysBand.getE (i);
+            float ei = m_KeysBand[i].GetE();
+
             if (ei < e)
                 e = sqrt (e*ei);
         }
 
-        if (!Tolerance){
-            *m_t = *m_t - m_dt;
-            m_dt = e * m_dt;
+        if (!Tolerance) {
+            *m_time   = *m_time - dtime;
+            dtime     = e * dtime;
             m_data[0] = m_data[2];
-            m_KeysBand.FallBackSwitch_F();
+            FallBackSwitches();
         }
 
     } while (Tolerance);
 }
 
-void Integration::RK_4(const float &dt)
+void Integration::FallBackSwitches()
+{
+    for(auto &n:m_KeysBand)
+        n.FallBackSwitch_F();
+}
+
+void Integration::AdvanceSwitches()
+{
+    for(auto &n:m_KeysBand)
+        n.AdvanceSwitch_F ();
+}
+
+void Integration::Runge_Kutta_4(const float &dt)
 {
     float a[5];
     a[0] = dt/2;
@@ -78,29 +96,30 @@ void Integration::RK_4(const float &dt)
     a[3] = dt;
     a[4] = dt/2;
 
-    QVector<float> Va;
-    QVector<float> Vr;
+    QVector<float> v_resultValue;
+    QVector<float> v_diffValue;
 
-    Va.resize (N);
-    Vr.resize (N);
+    v_resultValue.resize (m_number);
+    v_diffValue.resize (m_number);
 
     m_data[1] = m_data[0];
-    Va = m_data[0];
+    v_resultValue = m_data[0];
 
     float t_s = 0.0;
 
     for (int i = 0; i <= 3; i++) {
-        RightSideDif(Va,Vr);
-        float b = a[i+1]/3;
-        t_s = *m_t+a[i];
+        RightSideDif(v_resultValue,v_diffValue);
 
-        for (int j = 0;  j<N; j++) {
-            m_data[0][j] = m_data[0][j] + b * Vr[j];
-            Va[i]        = m_data[2][j] + t_s * Vr[j];
+        float b = a[i+1]/3;
+        t_s = *m_time+a[i];
+
+        for (int j = 0;  j<m_number; j++) {
+            m_data[0][j]     = m_data[0][j] + b * v_diffValue[j];
+            v_resultValue[i] = m_data[2][j] + t_s * v_diffValue[j];
         }
     }
 
-    *m_t = t_s;
+    *m_time = t_s;
 }
 
 
