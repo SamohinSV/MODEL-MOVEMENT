@@ -11,17 +11,21 @@ public:
     void FallBackSwitch_F();
     void SetKey(QString name);
     void SetAccuracy(float Accur);
+    void SetSwitch_F(float x);
+    void SetEnabled(bool B);
+    void CheckFinish();
 
-    float GetE();
     bool CheckSign();
     bool CheckAccuracy();
+    float GetE();
+    QString GetKey();
+    bool GetEnabled();
 private:
+    float Switch_F[2];
     QString Key;
-    float   Switch_F[2];
-    float   Accuracy;
-    float   AppearTime;
-    bool    Enabled;
-    bool    Happened;
+    float Accuracy;
+    bool Enabled;
+    bool Happened;
 
 };
 

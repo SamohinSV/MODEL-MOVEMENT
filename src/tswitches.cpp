@@ -32,9 +32,31 @@ bool TSwitches::CheckAccuracy()
     return (abs(Switch_F[0]) - Accuracy) <= pow (Accuracy,2);
 }
 
+bool TSwitches::GetEnabled()
+{
+    return  Enabled;
+}
+
 void TSwitches::SetAccuracy(float Accur)
 {
     Accuracy = Accur;
+}
+
+void TSwitches::SetEnabled(bool B)
+{
+    Enabled = B;
+}
+
+void TSwitches::CheckFinish()
+{
+    if (Enabled && !Happened)
+        if (!(signbit (Switch_F[0]) == signbit (Switch_F[0]) ))
+            exit(0);
+}
+
+void TSwitches::SetSwitch_F(float x)
+{
+    Switch_F[0] = x;
 }
 
 float TSwitches::GetE()
@@ -46,6 +68,11 @@ float TSwitches::GetE()
             return Accuracy/abs(Switch_F[0]);
     } else
           return 1;
+}
+
+QString TSwitches::GetKey()
+{
+    return  Key;
 }
 
 void TSwitches::SetKey(QString name)
