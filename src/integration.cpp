@@ -2,7 +2,7 @@
 #include <math.h>
 
 Integration::Integration(int number, float step, QVector<QString> keys)
-    :m_number(number),m_step(step)
+    :m_step(step),m_number(number)
 {
     OutAccur = m_step/100;
 
@@ -17,8 +17,13 @@ Integration::Integration(int number, float step, QVector<QString> keys)
     }
 }
 
+Integration::~Integration()
+{
+    delete m_time;
+}
+
 void Integration::Integrate(float *time)
-{  
+{
     nums num = First;
     m_time = time;
 
@@ -26,14 +31,15 @@ void Integration::Integrate(float *time)
      modf(*m_time/m_step,&dr_t);
     float dtime = m_step * (1 - dr_t);
 
-    SwitchKey ();
+    SwitchKey (m_KeysBand);
 
     bool Tolerance = false;
     do {
         do {
             m_data[2] = m_data[0];
+
             Runge_Kutta_4(dtime);
-            SwitchKey();
+            SwitchKey (m_KeysBand);
 
             m_KeysSet.resize (0);
 
@@ -87,6 +93,19 @@ void Integration::AdvanceSwitches()
         n.AdvanceSwitch_F ();
 }
 
+bool Integration::FinalIntegrate(QVector<QString> nameKeys)
+{
+    for (auto i: nameKeys)
+        for (int var = 0; m_KeysBand.size (); var++) {
+            if (m_KeysBand[var].GetKey() == i)
+                for (auto j:m_KeysSet)
+                    if (j==var)
+                        return true;
+        }
+
+    return false;
+}
+
 void Integration::Runge_Kutta_4(const float &dt)
 {
     float a[5];
@@ -121,5 +140,3 @@ void Integration::Runge_Kutta_4(const float &dt)
 
     *m_time = t_s;
 }
-
-
