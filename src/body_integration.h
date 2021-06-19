@@ -7,7 +7,7 @@
 class Body_integration:public Integration
 {
 public:
-    Body_integration(int n, float intStep, QVector<QString> keys);
+    explicit Body_integration(int n, float intStep, QVector<QString> keys);
     ~Body_integration() override;
 
     void calculation();
