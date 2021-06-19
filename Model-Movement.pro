@@ -16,6 +16,7 @@ SOURCES += \
     src/body_integration.cpp \
     src/main.cpp \
     src/integration.cpp \
+    src/monitoring.cpp \
     src/solid.cpp \
     src/tswitches.cpp
 
@@ -36,5 +37,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     src/body_integration.h \
     src/integration.h \
+    src/monitoring.h \
     src/solid.h \
     src/tswitches.h
