@@ -56,8 +56,7 @@ void Integration::Integrate(float *time)
             if (num == Second)
                 dtime = m_step;
 
-
-        } while (!(m_KeysSet.size () == 0));
+        } while ((m_KeysSet.size () == 0));
 
         Tolerance = true;
         float e = 1;
@@ -78,7 +77,7 @@ void Integration::Integrate(float *time)
             FallBackSwitches();
         }
 
-    } while (Tolerance);
+    } while (!(Tolerance));
 }
 
 void Integration::FallBackSwitches()
@@ -100,10 +99,10 @@ bool Integration::FinalIntegrate(QVector<QString> nameKeys)
             if (m_KeysBand[var].GetKey() == i)
                 for (auto j:m_KeysSet)
                     if (j==var)
-                        return true;
+                        return false;
         }
 
-    return false;
+    return true;
 }
 
 void Integration::Runge_Kutta_4(const float &dt)
@@ -130,11 +129,12 @@ void Integration::Runge_Kutta_4(const float &dt)
         RightSideDif(v_resultValue,v_diffValue);
 
         float b = a[i+1]/3;
-        t_s = *m_time+a[i];
+        float c = a[i];
+        t_s = *m_time+c;
 
-        for (int j = 0;  j<m_number; j++) {
+        for (int j = 0;  j<=m_number-1; j++) {
             m_data[0][j]     = m_data[0][j] + b * v_diffValue[j];
-            v_resultValue[i] = m_data[2][j] + t_s * v_diffValue[j];
+            v_resultValue[j] = m_data[2][j] + c * v_diffValue[j];
         }
     }
 

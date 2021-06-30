@@ -3,7 +3,10 @@
 
 TSwitches::TSwitches()
 {
-
+  Enabled = false;
+  Happened = false;
+  Switch_F[0] = 0;
+  Switch_F[1] = 0;
 }
 
 void TSwitches::AdvanceSwitch_F()
@@ -19,7 +22,7 @@ void TSwitches::FallBackSwitch_F()
 bool TSwitches::CheckSign()
 {
     if (Enabled) {
-        if (signbit (Switch_F[0]) == signbit (Switch_F[1]))
+        if (!(signbit (Switch_F[0]) == signbit (Switch_F[1])))
             return true;
         else
             return false;
