@@ -12,7 +12,7 @@ public:
 
     void calculation();
 private:
-    void RightSideDif(QVector<float> &a, QVector<float> &r) override;
+    void RightSideDif(QVector<float> &result, QVector<float> &Dif) override;
     void SwitchKey (QVector<TSwitches> &KeysBand) override;
 
     Solid m_d;

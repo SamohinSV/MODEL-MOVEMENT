@@ -23,13 +23,13 @@ void Body_integration::calculation()
 
 }
 
-void Body_integration::RightSideDif(QVector<float> &a, QVector<float> &r)
+void Body_integration::RightSideDif(QVector<float> &result, QVector<float> &Dif)
 {
-    m_d.x  = a[0];
-    m_d.dx = a[1];
+    m_d.x  = result[0];
+    m_d.dx = result[1];
 
-    r[0] = m_d.dx;
-    r[1] = 1;
+    Dif[0] = m_d.dx;
+    Dif[1] = 1;
 }
 
 void Body_integration::SwitchKey(QVector<TSwitches> &KeysBand)
@@ -40,7 +40,7 @@ void Body_integration::SwitchKey(QVector<TSwitches> &KeysBand)
 
         if (m.GetKey () == "Finish_time") {
             m.SetEnabled (true);
-            m.SetSwitch_F (m_d.time - 10);
+            m.SetSwitch_F(m_d.time - 0.5);
         }
        m.CheckFinish();
     }
